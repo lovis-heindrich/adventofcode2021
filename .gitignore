@@ -1,3 +1,6 @@
+# AOC session
+session_cookie.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
