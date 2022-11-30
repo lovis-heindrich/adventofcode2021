@@ -41,7 +41,7 @@ def count_pairs(polymer, n, rules):
     return max(char_counter.values()) - min(char_counter.values())
 
 if __name__ == "__main__":
-    with open("./data/day14.txt") as f:
+    with open("input.txt") as f:
         input = f.read().split("\n\n")
 
     template = input[0]

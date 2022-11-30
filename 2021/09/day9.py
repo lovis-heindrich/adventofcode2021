@@ -15,7 +15,7 @@ def get_basin_size(x,y,heights):
     return len(basin)
     
 if __name__ == "__main__":
-    with open("./data/day9.txt") as f:
+    with open("input.txt") as f:
         heights = [[int(x) for x in row] for row in f.read().splitlines()]
 
     low_points = []

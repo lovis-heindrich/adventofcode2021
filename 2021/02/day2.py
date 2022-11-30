@@ -1,5 +1,5 @@
 if __name__ == "__main__":
-    with open('./data/day2.txt') as f:
+    with open('input.txt') as f:
         lines = [x.split(" ") for x in f.read().splitlines()]
 
     aim = 0

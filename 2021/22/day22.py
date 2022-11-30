@@ -48,7 +48,7 @@ def cut_x(x1, x2, y1, y2):
         return (x1,x2)
 
 if __name__ == "__main__":
-    with open("./data/day22.txt") as f:
+    with open("input.txt") as f:
         input = f.read().splitlines()
 
     instructions = []

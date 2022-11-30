@@ -13,7 +13,7 @@ def binary_arr_to_int(arr):
     return int(arr_str, 2)
 
 if __name__ == "__main__":
-    with open("./data/day3.txt") as f:
+    with open("input.txt") as f:
         lines = [list(x) for x in f.read().splitlines()]
     m = np.array(lines, dtype=int)
 

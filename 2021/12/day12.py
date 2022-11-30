@@ -14,7 +14,7 @@ def count_paths(cave_map, current_path=["start"], allow_duplicate=False):
         return 0
 
 if __name__ == "__main__":
-    with open("./data/day12.txt") as f:
+    with open("input.txt") as f:
         input = [row.strip().split("-") for row in f.read().splitlines()]
     
     cave_map = {}

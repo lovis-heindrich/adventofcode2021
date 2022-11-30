@@ -49,7 +49,7 @@ def a_star(grid, start, goal):
     return g[goal]
 
 if __name__ == "__main__":
-    with open("./data/day15.txt") as f:
+    with open("input.txt") as f:
         input = [[int(x) for x in row] for row in f.read().splitlines()]
 
     start = (0,0)

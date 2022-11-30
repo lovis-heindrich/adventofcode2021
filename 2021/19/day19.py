@@ -47,7 +47,7 @@ def test_overlap(scanner_a, scanner_b):
     return False, None, None
 
 if __name__ == "__main__":
-    with open("./data/day19.txt") as f:
+    with open("input.txt") as f:
         input = f.read().split("\n\n")
     
     scanners = []

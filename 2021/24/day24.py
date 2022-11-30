@@ -74,7 +74,7 @@ def parse_parameters(commands):
     return n1, n2, n3
 
 if __name__ == "__main__":
-    with open("./data/day24.txt") as f:
+    with open("input.txt") as f:
         commands = [tuple(line.split(" ")) for line in f.read().splitlines()]
 
     split_commands = []

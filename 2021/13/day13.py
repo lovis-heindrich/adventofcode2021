@@ -6,7 +6,7 @@ def fold_dot(fold, dot):
     return dot
 
 if __name__ == "__main__":
-    with open("./data/day13.txt") as f:
+    with open("input.txt") as f:
         input = [row for row in f.read().splitlines()]
     
     dots = []

@@ -29,7 +29,7 @@ def get_last_winning_score(boards, numbers):
 
 
 if __name__ == "__main__":
-    with open("./data/day4.txt") as f:
+    with open("input.txt") as f:
         lines = f.read().splitlines()
     
     draw_numbers = [int(x) for x in lines[0].split(",")]

@@ -97,7 +97,7 @@ def evaluate(transmission):
         assert 0, "Unknown transmission" + str(transmission)
 
 if __name__ == "__main__":
-    with open("./data/day16.txt") as f:
+    with open("input.txt") as f:
         hex_str = f.read().strip()
         
     input = int(hex_str, 16)

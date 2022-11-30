@@ -27,7 +27,7 @@ def find_missing_chars(row):
     return score
     
 if __name__ == "__main__":
-    with open("./data/day10.txt") as f:
+    with open("input.txt") as f:
         input = [row for row in f.read().splitlines()]
     
     corrupted_sum = 0

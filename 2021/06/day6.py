@@ -18,7 +18,7 @@ def efficient_day(population, n):
     return sum(counts)
 
 if __name__ == "__main__":
-    with open("./data/day6.txt") as f:
+    with open("input.txt") as f:
         population = [int(x) for x in f.read().split(",")]
 
     print("Part 1:", efficient_day(population, 80))

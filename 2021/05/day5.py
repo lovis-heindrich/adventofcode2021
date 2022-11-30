@@ -25,7 +25,7 @@ def count_overlap(size, pairs, diagonal=False):
     return sum([sum([x>1 for x in row]) for row in grid])
 
 if __name__ == "__main__":
-    with open("./data/day5.txt") as f:
+    with open("input.txt") as f:
         lines = f.read().splitlines()
 
     pairs = [[int(s) for s in re.findall(r'\b\d+\b', line)] for line in lines]

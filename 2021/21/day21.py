@@ -19,7 +19,7 @@ def quantum_die(p1, p2, s1, s2, p1_active):
         return p1_wins, p2_wins
         
 if __name__ == "__main__":
-    with open("./data/day21.txt") as f:
+    with open("input.txt") as f:
         p1_init, p2_init = [int(input[-1])-1 for input in f.read().splitlines()]
     
     p1, p2 = p1_init, p2_init

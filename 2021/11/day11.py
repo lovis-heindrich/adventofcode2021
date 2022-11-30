@@ -54,7 +54,7 @@ def synchronize(grid):
                         grid[x][y] = 0
 
 if __name__ == "__main__":
-    with open("./data/day11.txt") as f:
+    with open("input.txt") as f:
         input = [[int(x) for x in row] for row in f.read().splitlines()]
     
     print("Part 1:", simulate(input, 100))

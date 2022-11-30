@@ -6,7 +6,7 @@ def fuel_consumption_increasing(positions, target):
     return sum([x*(x+1)//2 for x in distances])
 
 if __name__ == "__main__":
-    with open("./data/day7.txt") as f:
+    with open("input.txt") as f:
         positions = [int(x) for x in f.read().split(",")]
     candidates = range(min(positions), max(positions))
     best_target = min(candidates, key=lambda x: fuel_consumption(positions, x))

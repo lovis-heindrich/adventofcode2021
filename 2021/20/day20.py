@@ -18,7 +18,7 @@ def apply_filter(filter, image):
     return new_image
 
 if __name__ == "__main__":
-    with open("./data/day20.txt") as f:
+    with open("input.txt") as f:
         filter, image = f.read().split("\n\n")
     
     filter = [1 if element == "#" else 0 for element in filter]

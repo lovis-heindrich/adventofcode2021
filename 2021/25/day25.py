@@ -31,7 +31,7 @@ def print_grid(grid):
         print("".join(row))
 
 if __name__ == "__main__":
-    with open("./data/day25.txt") as f:
+    with open("input.txt") as f:
         grid = [[c for c in line.strip()] for line in f.read().splitlines()]
 
     moved = 1

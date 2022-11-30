@@ -15,7 +15,7 @@ def hits_target(vx, vy, x1, x2, y1, y2):
         highest_y = max(y, highest_y)
 
 if __name__ == "__main__":
-    with open("./data/day17.txt") as f:
+    with open("input.txt") as f:
         x1, x2, y1, y2 = [int(s) for s in re.findall(r'(-?[\d]+)', f.read().strip())]
 
     max_hy = 0

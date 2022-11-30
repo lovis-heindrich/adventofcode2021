@@ -84,7 +84,7 @@ def magnitude(input):
     return 3*magnitude(input[0])+2*magnitude(input[1])
 
 if __name__ == "__main__":
-    with open("./data/day18.txt") as f:
+    with open("input.txt") as f:
         input = [parse(x) for x in f.read().strip().splitlines()]
 
     summed = input[0]

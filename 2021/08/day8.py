@@ -41,7 +41,7 @@ def parse_signal(signal):
     return output
 
 if __name__ == "__main__":
-    with open("./data/day8.txt") as f:
+    with open("input.txt") as f:
         lines = f.read().splitlines()
 
     signals = [x.strip().split("|") for x in lines]
