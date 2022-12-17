@@ -11,6 +11,7 @@ class Cave:
         self.grid = [[2]*7]
         self.next_shape = shapes_gen()
         self.new_shape = True
+        self.seen_states = {}
 
     def __repr__(self) -> str:
         str_rep = "\n"
@@ -21,15 +22,26 @@ class Cave:
     def step(self):
         self.num_steps += 1
         if self.new_shape:
-            self.num_dropped += 1
+            next_shape, next_shape_index = next(self.next_shape)
+            next_command, next_command_index = next(self.commands)
+            key = (next_shape_index, next_command_index, str(self.grid))
+            if key in self.seen_states.keys():
+                pass
+                #print("Found loop!")
+                #print("From", self.seen_states[key])
+                #print("To", (self.height(), self.num_dropped))
+            else:
+                self.seen_states[key] = (self.height(), self.num_dropped)
             self.make_empty_rows()
-            self.grid = get_shape(next(self.next_shape)) + self.grid
+            self.grid = get_shape(next_shape) + self.grid
             self.next_cmd = "push"
             self.new_shape = False
+        elif self.next_cmd == "push":
+            next_command, next_command_index = next(self.commands)
         if self.next_cmd == "push":
             self.next_cmd = "fall"
             first, last = self.get_moving_row_indices()
-            next_command, next_command_index = next(self.commands)
+            #next_command, next_command_index = next(self.commands)
             left = (next_command == "<")
             #print("push", left, self.is_side_blocked(left, first, last))
             if not self.is_side_blocked(left, first, last):
@@ -53,6 +65,7 @@ class Cave:
                 for row_i, row in zip(range(first,last+1), self.grid[first:last+1]):
                     self.grid[row_i] = [x if (x!=1) else 2 for x in row]
                 self.new_shape=True
+                self.num_dropped += 1
             else:
                 for row_i, row in reversed(list(zip(range(first, last+2), self.grid[first:last+2]))):
                     new_row = []
@@ -70,6 +83,7 @@ class Cave:
             self.step()
             while not self.new_shape:
                 self.step()
+        self.trim_floor()
         
     def get_moving_row_indices(self):
         first, last = None, None
@@ -79,6 +93,7 @@ class Cave:
             if (1 not in row) and (first!=None):
                 last = row_i - 1
                 return first, last
+        print("Error, 1 indices not found", self.grid)
 
     def is_side_blocked(self, left=True, first=None, last=None):
         for row_i, row in zip(range(first,last+1), self.grid[first:last+1]):
@@ -102,18 +117,13 @@ class Cave:
         return len(self.grid)-empty-floor+self.trimmed_height
     
     def trim_floor(self):
-        indices = []
-        for col_i in range(len(self.grid[0])):
-            for row_i in range(len(self.grid)):
-                if self.grid[row_i][col_i] == 2:
-                    indices.append(row_i)
-                    break
-        assert len(indices)==len(self.grid[0])
-        highest = max(indices)
-        trimmed = len(self.grid) - highest - 1
-        self.trimmed_height += trimmed
-        self.grid = self.grid[:highest+1]
-
+        for row_i in range(max(0, len(self.grid)-2)):
+            if all([(self.grid[row_i][col_i]==2) or (self.grid[row_i+1][col_i]==2) for col_i in range(len(self.grid[0]))]):
+                trimmed = len(self.grid) - (row_i + 2)
+                self.trimmed_height += trimmed
+                self.grid = self.grid[:row_i+2]
+                break
+        
     def is_blocked(self, first=None, last=None):
         if (first==None) or (last==None):
             first = 0
@@ -148,7 +158,7 @@ def shapes_gen():
     index = 0
     length = len(shapes)
     while True:
-        yield shapes[index]
+        yield shapes[index], index
         index = (index+1)%length
 
 def get_shape(shape, width=7, left_distance=2):
@@ -186,17 +196,39 @@ if __name__ == "__main__":
     #commands = [cmd for cmd in ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"]
     cave = Cave(commands)
 
-    for i in range(2022):
-        cave.process_shape()
-    print("Part 1:", cave.height())
+    #for i in range(2022):
+    #    cave.process_shape()
+    #print("Part 1:", cave.height())
 
     cave = Cave(commands)
-    last_height = 0
-    for i in range(10):
-        for _ in range(len(commands)):
-            cave.process_shape()
-        print(i, cave.height()-last_height)
-        last_height = cave.height()
+    # last_height = 0
+    # for i in range(1000):
+    #     #for _ in range(100):
+    #     cave.process_shape()
+    #     print(i, cave.height()-last_height)
+    #     last_height = cave.height()
+    
+    #Found loop!
+    #From (479, 306)
+    #To (3095, 2021)
+    loop_start = 306
+    loop_end = 2021
+    loop_duration = loop_end-loop_start
+    loop_height = 3095 - 479
+
+    for i in range(loop_start):
+        cave.process_shape()
+    #before_loop = cave.height()
+    remaining_steps = 1000000000000 - loop_start
+    remaining_loops = remaining_steps // loop_duration
+    remaining_after = remaining_steps % loop_duration
+    after_loop = loop_height*remaining_loops
+    for i in range(remaining_after):
+        cave.process_shape()
+    print("True", cave.height()+after_loop)
+
+
+
     # command_length = len(commands)
     # cave = Cave(commands)
     # for i in range(command_length):
