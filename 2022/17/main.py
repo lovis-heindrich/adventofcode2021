@@ -1,14 +1,11 @@
-import tqdm
 class Cave:
     def __init__(self, commands, width=7) -> None:
         self.width = width
-        self.lowest = 0
         self.trimmed_height = 0
         self.num_dropped = 0
-        self.num_steps = 0
         self.next_command = "push"
         self.commands = command_gen(commands)
-        self.grid = [[2]*7]
+        self.grid = [[2]*self.width]
         self.next_shape = shapes_gen()
         self.new_shape = True
         self.seen_states = {}
@@ -19,19 +16,19 @@ class Cave:
             str_rep += str(row)+"\n"
         return str_rep
     
-    def step(self):
-        self.num_steps += 1
+    def step(self, find_loop=False):
         if self.new_shape:
+            self.trim_floor()
             next_shape, next_shape_index = next(self.next_shape)
             next_command, next_command_index = next(self.commands)
             key = (next_shape_index, next_command_index, str(self.grid))
-            if key in self.seen_states.keys():
-                pass
-                #print("Found loop!")
-                #print("From", self.seen_states[key])
-                #print("To", (self.height(), self.num_dropped))
-            else:
-                self.seen_states[key] = (self.height(), self.num_dropped)
+            if find_loop:
+                if key in self.seen_states.keys():
+                    start_height, start_dropped = self.seen_states[key]
+                    end_height, end_dropped = self.height(), self.num_dropped
+                    return start_dropped, end_dropped-start_dropped, end_height-start_height
+                else:
+                    self.seen_states[key] = (self.height(), self.num_dropped)
             self.make_empty_rows()
             self.grid = get_shape(next_shape) + self.grid
             self.next_cmd = "push"
@@ -41,9 +38,7 @@ class Cave:
         if self.next_cmd == "push":
             self.next_cmd = "fall"
             first, last = self.get_moving_row_indices()
-            #next_command, next_command_index = next(self.commands)
             left = (next_command == "<")
-            #print("push", left, self.is_side_blocked(left, first, last))
             if not self.is_side_blocked(left, first, last):
                 for row_i, row in zip(range(first,last+1), self.grid[first:last+1]):
                     if left:
@@ -83,7 +78,6 @@ class Cave:
             self.step()
             while not self.new_shape:
                 self.step()
-        self.trim_floor()
         
     def get_moving_row_indices(self):
         first, last = None, None
@@ -193,52 +187,22 @@ if __name__ == "__main__":
     with open("input.txt") as f:
         commands = [cmd for cmd in f.read().strip()]
     
-    #commands = [cmd for cmd in ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>"]
     cave = Cave(commands)
-
-    #for i in range(2022):
-    #    cave.process_shape()
-    #print("Part 1:", cave.height())
-
-    cave = Cave(commands)
-    # last_height = 0
-    # for i in range(1000):
-    #     #for _ in range(100):
-    #     cave.process_shape()
-    #     print(i, cave.height()-last_height)
-    #     last_height = cave.height()
-    
-    #Found loop!
-    #From (479, 306)
-    #To (3095, 2021)
-    loop_start = 306
-    loop_end = 2021
-    loop_duration = loop_end-loop_start
-    loop_height = 3095 - 479
-
-    for i in range(loop_start):
+    for i in range(2022):
         cave.process_shape()
-    #before_loop = cave.height()
+    print("Part 1:", cave.height())
+    
+    cave = Cave(commands)
+    step_return = None
+    while step_return == None:
+        step_return = cave.step(find_loop=True)
+    loop_start, loop_duration, loop_height = step_return
+
+    cave = Cave(commands)
     remaining_steps = 1000000000000 - loop_start
     remaining_loops = remaining_steps // loop_duration
     remaining_after = remaining_steps % loop_duration
     after_loop = loop_height*remaining_loops
-    for i in range(remaining_after):
+    for i in range(loop_start + remaining_after):
         cave.process_shape()
-    print("True", cave.height()+after_loop)
-
-
-
-    # command_length = len(commands)
-    # cave = Cave(commands)
-    # for i in range(command_length):
-    #     cave.process_shape()
-    # first_height = cave.height()
-    # for i in range(command_length):
-    #     cave.process_shape()
-    # second_height = cave.height() - first_height
-    # remaining_steps = 1000000000000%command_length
-    # for i in range(remaining_steps):
-    #     cave.process_shape()
-    # remaining_height = cave.height() - first_height - second_height
-    # print("Part 2:", first_height + ((1000000000000)//command_length)*second_height + remaining_height)
+    print("Part 2:", cave.height()+after_loop)
