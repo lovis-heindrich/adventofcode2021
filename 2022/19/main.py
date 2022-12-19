@@ -18,79 +18,8 @@ class Blueprint:
     def __repr__(self) -> str:
         return str(self.costs)
 
-def available_actions(blueprint: Blueprint, ores: list[int]):
-    ore, clay, obsidian, _ = ores
-    actions = [0] # 0=wait, 1=ore, 2=clay, 3=obsidian, 4=geode
-    if ore >= blueprint.ore_cost_ore:
-        actions.append(1)
-    if ore >= blueprint.clay_cost_ore:
-        actions.append(2)
-    if (ore >= blueprint.obsidian_cost_ore) and (clay >= blueprint.obsidian_cost_clay):
-        actions.append(3)
-    if (ore >= blueprint.geode_cost_ore) and (obsidian >= blueprint.geode_cost_obsidian):
-        actions.append(4)
-    return actions
-
-def available_actions_prune(step, blueprint: Blueprint, ores: list[int]):
-    ore, clay, obsidian, _ = ores
-    if (ore >= blueprint.geode_cost_ore) and (obsidian >= blueprint.geode_cost_obsidian) and (step>=2):
-        return [4]
-    actions = [0] # 0=wait, 1=ore, 2=clay, 3=obsidian, 4=geode
-    if (ore >= blueprint.ore_cost_ore) and (step>=3+blueprint.geode_cost_ore):
-        actions.append(1)
-    if (ore >= blueprint.clay_cost_ore) and (step>=4):
-        actions.append(2)
-    if (ore >= blueprint.obsidian_cost_ore) and (clay >= blueprint.obsidian_cost_clay) and (step>=3):
-        actions.append(3)
-    return actions
-
 def collect_ore(ores, robots, n=1):
     return [ore+(robot*n) for ore, robot in zip(ores, robots)]
-
-def build(action, blueprint: Blueprint, ores, robots):
-    next_ores = [ore for ore in ores]
-    next_robots = [robot for robot in robots]
-    match action:
-        case 0:
-            return next_ores, next_robots
-        case 1:
-            next_ores[0] -= blueprint.ore_cost_ore
-            next_robots[0]+= 1
-        case 2:
-            next_ores[0] -= blueprint.clay_cost_ore
-            next_robots[1]+= 1
-        case 3:
-            next_ores[0] -= blueprint.obsidian_cost_ore
-            next_ores[1] -= blueprint.obsidian_cost_clay
-            next_robots[2]+= 1
-        case 4:
-            next_ores[0] -= blueprint.geode_cost_ore
-            next_ores[2] -= blueprint.geode_cost_obsidian
-            next_robots[3]+= 1
-    return next_ores, next_robots
-
-@lru_cache(maxsize=None)
-def factory_rec(step, blueprint, ores=None, robots=None):
-    #global global_steps
-    #global_steps += 1
-    if (ores==None) or (robots==None):
-        ores = [0, 0, 0, 0]
-        robots = [1, 0, 0, 0]
-    if step == 0:
-        return ores[-1]
-    # Decide what to build
-    #actions = available_actions(blueprint, ores)
-    actions = available_actions_prune(step, blueprint, ores)
-    # Collect
-    ores = collect_ore(ores, robots)
-    # Build
-    values = []
-    for action in actions:
-        next_ores, next_robots = build(action, blueprint, ores, robots)
-        #print(f"step{step} action {action}, ore {ores}->{next_ores}, robots {robots}->{next_robots}")
-        values.append(factory_rec(step-1, blueprint, tuple(next_ores), tuple(next_robots)))
-    #print(step, actions, values)
-    return max(values)
 
 @lru_cache(maxsize=2**24)
 def factory_smart(step, blueprint: Blueprint, ores=None, robots=None):
@@ -162,36 +91,8 @@ if __name__ == "__main__":
         factory_smart.cache_clear()
     print("Part 1:", sum(values))
     
-    #test_print = Blueprint([1,4,2,3,14,2,7])
-    #global_steps = 0
-    # test_print = Blueprint([2,2,3,3,8,3,12])
-    
-    #test_print = Blueprint([1,1,2,3,3,1,1])
-    # test_robots = None#tuple([1,0,1,1])
-    # test_ore = None#tuple([1,1,1,2])
-    # import time
-    # # start = time.time()
-    # value = factory_rec(24, test_print, robots=test_robots, ores=test_ore)
-    # first = time.time()
-    # value_smart = factory_smart(24, test_print, robots=test_robots, ores=test_ore)
-    # second = time.time()
-    # print("Part 1:", value, value_smart)
-    # print("Time", first-start, second-first)
-    #print(global_steps, "steps")
-
-    import time
-    for steps in range(32,33):
-        start = time.time()
-        print(factory_smart(steps, blueprints[2]))
-        factory_smart.cache_clear()
-        print(steps, int((time.time()-start)*100)/100)
-    # values = []
-    # #for i in tqdm.tqdm(range(1)):
-    # values.append(factory_smart(32, blueprints[2]))
-    # print(factory_smart.cache_info())
-    # print(values)
-    # blueprint1 = 12
-    # blueprint2 = 35
-    # blueprint3 = 52
-    #print("Part 2:", values[0]*values[1]*values[2])
-
+    values = []
+    # Takes about 1.5h
+    for i in tqdm.tqdm(range(3)):
+        values.append(factory_smart(32, blueprints[i]))
+    print("Part 2:", values[0]*values[1]*values[2])
